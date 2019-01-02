@@ -1,5 +1,6 @@
 package com.zhandev.recipe.domain;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -28,6 +29,8 @@ public class Recipe {
     private Integer servings;
     private String source;
     private String url;
+    
+    @Lob
     private String directions;
     
     @Lob
@@ -37,7 +40,7 @@ public class Recipe {
     private Notes notes;
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "recipe")
-    private Set<Ingredient> ingredients;
+    private Set<Ingredient> ingredients = new HashSet<>();
     
     
     // EnumType.STRING, the enum values will be stored as string in database, use this one
@@ -49,7 +52,7 @@ public class Recipe {
     @JoinTable(name = "recipe_category", 
     	joinColumns = @JoinColumn(name = "recipe_id"), 
     	inverseJoinColumns = @JoinColumn(name = "category_id"))
-    private Set<Category> categories;
+    private Set<Category> categories = new HashSet<>();
     
 	public Long getId() {
 		return id;
@@ -129,6 +132,7 @@ public class Recipe {
 
 	public void setNotes(Notes notes) {
 		this.notes = notes;
+		notes.setRecipe(this);  // bidirectional
 	}
 
 	public Set<Ingredient> getIngredients() {
@@ -155,4 +159,8 @@ public class Recipe {
 		this.categories = categories;
 	}
     
+	public void addIngredient(Ingredient ingredient) {
+		this.ingredients.add(ingredient);
+		ingredient.setRecipe(this);  // bidirectional
+	}
 }

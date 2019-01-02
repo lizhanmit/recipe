@@ -1,30 +1,24 @@
 package com.zhandev.recipe.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.zhandev.recipe.repository.CategoryRepository;
-import com.zhandev.recipe.repository.UnitOfMeasureRepository;
+import com.zhandev.recipe.service.RecipeService;
 
 @Controller
 public class IndexController {
 
-	private CategoryRepository categoryRepository;
-	private UnitOfMeasureRepository unitOfMeasureRepository;
+	private final RecipeService recipeService;
 	
-	public IndexController(CategoryRepository categoryRepository, UnitOfMeasureRepository unitOfMeasureRepository) {
-		super();
-		this.categoryRepository = categoryRepository;
-		this.unitOfMeasureRepository = unitOfMeasureRepository;
+	public IndexController(RecipeService recipeService) {
+		this.recipeService = recipeService;
 	}
 
 
 	@RequestMapping({"", "/", "index", "index.html"})
-	public String getIndexPage() {
-		
-		System.out.println(categoryRepository.findByDescription("Italian").get().getId());
-		System.out.println(unitOfMeasureRepository.findByDescription("Pinch").get().getId());
-		
+	public String getIndexPage(Model model) {
+		model.addAttribute("recipes", recipeService.getRecipes());
 		return "index";
 	}
 }
